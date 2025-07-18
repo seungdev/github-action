@@ -1,28 +1,36 @@
-name : Run test # Github Actions 탭에 표시될 이름
+# 워크플로우 이름: GitHub Actions 탭에서 표시될 이름
+name: Run Test
 
-on: # 언제 실행될지
+# 언제 워크플로우를 실행할지 정의
+on:
   push:
-    branches: [main] # main 브랜치에 push 될 때 실행됨.
-  pull_request:
-
+    branches: [main]     # main 브랜치에 push될 때 실행됨
+  pull_request:          # PR이 생성되거나 업데이트될 때도 실행됨 (main 기준)
 
 # 작업 정의
 jobs:
-  test: 
-    runs-on: ubuntu-latest #우분투 최신버전(가상머신)
+  test:                  # job의 이름 (임의로 지을 수 있음)
+    runs-on: ubuntu-latest     # 이 job이 실행될 환경 (Ubuntu 최신 버전의 가상머신에서 실행됨)
 
-    steps: 
+    steps:               # 이 job에서 실행할 단계들 정의
       - name: Checkout code
-       uses: actions/checkout@v4 #npm install이 가능해짐
+        uses: actions/checkout@v4
+        # 저장소의 소스 코드를 해당 가상머신에 내려받음
+        # 이 과정을 거쳐야 npm install이나 테스트가 가능함
 
-      - name: Setup Node
-       uses: actions/setup-node@v4
-       with:
-          node-version: 18 #npx,npm 사용이 가능해짐
-      
-      - name: Install dependencies # 패키지 설치(의존성)
-       run : npm ci
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+        # Node.js 18 버전을 설치하여 사용할 수 있도록 설정
+        # npm, node, npx 등의 명령을 쓸 수 있게 됨
+
+      - name: Install dependencies
+        run: npm ci
+        # package-lock.json 기반으로 의존성 설치 (빠르고 일관성 있게)
+        # 일반적으로 CI 환경에선 npm install 대신 npm ci를 사용함
 
       - name: Run tests
-        run: npm test #package.json에서 test 스크립트 실행
-        #Jest 동작 구간
+        run: npm test
+        # package.json에 정의된 test 스크립트를 실행함
+        # Jest 등의 테스트 도구가 여기서 동작하게 됨
